@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 // choose result canvas
 
@@ -48,7 +49,7 @@ const geo4 = new THREE.PlaneGeometry(1, 1, 32, 32); // width, height, width segm
 const geo5 = new THREE.TorusGeometry(1, 0.35, 32, 100); // donut, radius, tube, radial segment, tubular segment
 
 const box = new THREE.Mesh(geometry, material);
-
+const controls = new OrbitControls(camera, renderer.domElement);
 // will be added to scene to make this box shown.
 
 scene.add(box);
@@ -57,15 +58,21 @@ scene.add(box);
 
 // function to use in requestAnimationFrame
 function animate() {
-  // whenever animate is called, it will rotate the box.
-  box.rotation.y += 0.01;
-  requestAnimationFrame(animate);
   // even though y is being modified, the changes not reflected on the screen.
   renderer.render(scene, camera);
+  // whenever animate is called, it will rotate the box.
+  box.rotation.y += 0.01;
+
+  controls.update();
+  requestAnimationFrame(animate);
 }
 // before rendering next frame, it repeatedly call the animate.
 animate();
-
+controls.enableZoom = false;
+controls.enablePan = false; // command move not allowed
+controls.minDistance = 2; // zoom in zoom out limit
+controls.autoRotate = true; // auto rotate. rotate byitself
+controls.enableDamping = true; // more soft animation
 // for the resizing
 window.addEventListener("resize", () => {
   // update the camera
